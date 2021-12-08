@@ -1,10 +1,27 @@
 import * as express from "express";
+import * as Cors from "cors";
+import * as authRoutes from "./routes/auth-routes";
+import * as apiRoutes from "./routes/api-routes";
+import { authMiddleware } from "./middleware/auth-middleware";
+
 const app = express();
 
-// main routes
-app.get("/", (req, res) => {
-  res.send("Hello world");
-});
+app.use(Cors({ origin: true }));
+
+// for parsing application/json
+app.use(express.json());
+
+// for parsing application/xxx-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+// gmail auth routes
+app.use("/", authRoutes);
+
+// auth middleware for api routes
+app.use(authMiddleware);
+
+// gmail api routes
+app.use("/api", apiRoutes);
 
 // start the server
 const PORT = 3000;
